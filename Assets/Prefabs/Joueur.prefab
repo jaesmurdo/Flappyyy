@@ -104,6 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   forceSaut: 10
   tempsRecharge: 0.05
+  objetAActiver: {fileID: 0}
+  objetASupprimer: {fileID: 0}
 --- !u!65 &3072532780285140793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -163,7 +165,7 @@ GameObject:
   - component: {fileID: 7453464483737978237}
   - component: {fileID: 9038439740040171781}
   - component: {fileID: 3169044598221244394}
-  - component: {fileID: 1789369558968902212}
+  - component: {fileID: 1531802070820684182}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -236,8 +238,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1789369558968902212
-BoxCollider:
+--- !u!135 &1531802070820684182
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -255,8 +257,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.49
+  m_Center: {x: 0.000033070333, y: -0.00014114007, z: 0.0001848992}
 --- !u!1 &8578578781588502407
 GameObject:
   m_ObjectHideFlags: 0

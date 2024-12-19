@@ -4,6 +4,7 @@ public class Saut : MonoBehaviour
 {
     public float forceSaut = 5f; // Force de base du saut
     public float tempsRecharge = 0.5f; // Temps de recharge entre deux sauts (en secondes)
+   
 
     private Rigidbody rb;
     private bool peutSauter = true; // Si le joueur peut sauter ou non
