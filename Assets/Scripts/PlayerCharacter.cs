@@ -1,82 +1,128 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Saut : MonoBehaviour
 {
-    public float forceSaut = 5f; // Force de base du saut
-    public float tempsRecharge = 0.5f; // Temps de recharge entre deux sauts (en secondes)
-   
+    public float forceSaut = 5f;
+    public float tempsRecharge = 0.5f;
+    public GameObject objetAActiver;  // Game Over à activer après la mort
+    public Button boutonStart;        // Bouton pour démarrer le jeu
+    public Button boutonRestart;      // Bouton pour recommencer après la mort
+    public Transform pointDeDepart;  // Le point de départ où le joueur sera téléporté après le clic sur Restart
 
     private Rigidbody rb;
-    private bool peutSauter = true; // Si le joueur peut sauter ou non
-    private float dernierSautTime = 0f; // Temps du dernier saut
-
-    // Références aux objets que vous souhaitez manipuler après la collision
-    public GameObject objetAActiver; // L'objet dont le SpriteRenderer sera activé
-    public GameObject objetASupprimer; // L'objet à supprimer après la collision
+    private bool peutSauter = true;
+    private float dernierSautTime = 0f;
+    private bool jeuLance = false;   // Indique si le jeu a commencé
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        // Assurez-vous que les boutons et l'objet Game Over sont dans l'état initial correct
+        if (boutonStart != null)
+        {
+            boutonStart.gameObject.SetActive(true); // Le bouton "Start" est visible au début
+            boutonStart.onClick.AddListener(OnStartButtonClick); // Ajout de l'écouteur pour démarrer le jeu
+        }
+
+        if (boutonRestart != null)
+        {
+            boutonRestart.gameObject.SetActive(false); // Le bouton "Restart" est désactivé au début
+            boutonRestart.onClick.AddListener(OnRestartButtonClick); // Ajout de l'écouteur pour recommencer
+        }
+
+        if (objetAActiver != null)
+        {
+            objetAActiver.SetActive(false); // Assurez-vous que l'écran Game Over est caché au début
+        }
     }
 
     void Update()
     {
-        // Si le joueur peut sauter et appuie sur la barre d'espace
-        if (Input.GetKeyDown(KeyCode.Space) && peutSauter)
+        // Si le jeu est lancé et que la touche espace est pressée
+        if (jeuLance && Input.GetKeyDown(KeyCode.Space) && peutSauter)
         {
-            // Appliquer une vitesse verticale constante pour le saut
             rb.velocity = new Vector3(rb.velocity.x, forceSaut, rb.velocity.z);
-
-            // Désactiver la possibilité de sauter et démarrer le temps de recharge
             peutSauter = false;
             dernierSautTime = Time.time;
         }
 
-        // Vérifier si le temps de recharge est écoulé
+        // Vérifier si le temps de recharge est écoulé pour permettre un nouveau saut
         if (!peutSauter && Time.time - dernierSautTime >= tempsRecharge)
         {
-            peutSauter = true; // Le joueur peut à nouveau sauter
+            peutSauter = true;
         }
     }
 
-    // Détection de collision avec un autre objet (non trigger)
     void OnCollisionEnter(Collision collision)
     {
-        // Affiche un message dans la console lorsqu'une collision avec un objet (non trigger) est détectée
-        Debug.Log("Collision détectée avec " + collision.gameObject.name);
-
-        // Faire disparaître le personnage
-        gameObject.SetActive(false);
-
-        // Activer le SpriteRenderer d'un objet choisi
-        if (objetAActiver != null)
+        if (jeuLance)
         {
-            SpriteRenderer spriteRenderer = objetAActiver.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            gameObject.SetActive(false); // Désactive le joueur en cas de collision (mort)
+
+            // Affiche l'écran Game Over
+            if (objetAActiver != null)
             {
-                spriteRenderer.enabled = true; // Activer le SpriteRenderer
+                objetAActiver.SetActive(true); // Affiche l'écran Game Over
+            }
+
+            // Affiche le bouton Restart
+            if (boutonRestart != null)
+            {
+                boutonRestart.gameObject.SetActive(true);
             }
         }
 
-        // Supprimer un autre GameObject
-        if (objetASupprimer != null)
-        {
-            Destroy(objetASupprimer); // Supprimer le GameObject choisi
-            Debug.Log("Objet supprimé : " + objetASupprimer.name); // Ajouter un message pour déboguer
-        }
-
-        // Supprimer l'objet en collision
-        Destroy(collision.gameObject); // Supprimer l'objet avec lequel le personnage entre en collision
-        Debug.Log("Objet en collision supprimé : " + collision.gameObject.name); // Message de débogage
+        // Supprimer l'objet en collision, si nécessaire
+        Destroy(collision.gameObject);
     }
 
-    // Détection de collision avec un trigger
     void OnTriggerEnter(Collider other)
     {
-        // Affiche un message dans la console lorsqu'une collision avec un trigger est détectée
-        Debug.Log("Trigger détecté avec " + other.gameObject.name);
+        ScoreManager.IncrementerScore(1); // Incrémente le score si nécessaire
+    }
 
-        // Incrémente le score de 1 chaque fois que le joueur entre dans un trigger
-        ScoreManager.IncrementerScore(1);
+    // Cette méthode est appelée lorsque le bouton Start est cliqué
+    void OnStartButtonClick()
+    {
+        // Désactive le bouton Start
+        if (boutonStart != null)
+        {
+            boutonStart.gameObject.SetActive(false);
+        }
+
+        // Commence le jeu (le personnage peut maintenant sauter)
+        jeuLance = true;
+
+        // Le joueur commence dans la position actuelle, pas de changement ici
+    }
+
+    // Cette méthode est appelée lorsque le bouton Restart est cliqué
+    void OnRestartButtonClick()
+    {
+        // Réactive le joueur avant de le téléporter
+        gameObject.SetActive(true);
+
+        // Réinitialise la position du joueur au point de départ
+        if (pointDeDepart != null)
+        {
+            transform.position = pointDeDepart.position; // Le joueur revient à la position de départ
+        }
+
+        // Cache l'écran Game Over et le bouton Restart
+        if (objetAActiver != null)
+        {
+            objetAActiver.SetActive(false); // Cache l'écran Game Over
+        }
+
+        if (boutonRestart != null)
+        {
+            boutonRestart.gameObject.SetActive(false); // Cache le bouton Restart
+        }
+
+        // Réinitialise l'état du jeu (s'il y a besoin)
+        jeuLance = true;  // Recommence le jeu
+        peutSauter = true;  // Permet au joueur de sauter à nouveau
     }
 }
