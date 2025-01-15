@@ -6,8 +6,8 @@ public class ActivationScript : MonoBehaviour
 {
     [Header("Paramètres")]
     public Button activationButton; // Le bouton qui active l'action
-    public GameObject prefabToSpawn; // Le prefab à faire apparaître (par exemple le joueur)
-    public Vector3 spawnPosition; // L'endroit où le prefab sera spawné
+    public GameObject player; // Référence au joueur (au lieu d'un prefab à instancier)
+    public Vector3 spawnPosition; // L'endroit où le joueur sera placé
     public Image imageToHide; // L'image UI (avec Image component) à cacher
 
     [Header("Préfabriqués supplémentaires")]
@@ -57,10 +57,11 @@ public class ActivationScript : MonoBehaviour
             StartCoroutine(FadeOut(imageToHide));
         }
 
-        // Faire apparaître le premier prefab au bon endroit
-        if (prefabToSpawn != null)
+        // Placer le joueur à la position donnée
+        if (player != null)
         {
-            Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+            player.transform.position = spawnPosition; // Positionne le joueur à spawnPosition
+            player.SetActive(true); // Active le joueur (au cas où il serait désactivé)
         }
 
         // Faire apparaître le deuxième prefab au bon endroit
@@ -84,7 +85,7 @@ public class ActivationScript : MonoBehaviour
         float endAlpha = 0f; // L'alpha final (transparent)
         float timeElapsed = 0f;
 
-        // On vérifie que l'image est bien visible au début
+        // On vérifie que l'image est bien visible au départ
         if (startAlpha <= 0f)
         {
             Debug.LogWarning("L'image est déjà transparente au départ!");

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 790669573433860753}
   - component: {fileID: 7171989627198301300}
   m_Layer: 0
-  m_Name: spawn
+  m_Name: TileSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

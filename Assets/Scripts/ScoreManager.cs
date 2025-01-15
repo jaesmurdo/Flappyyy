@@ -4,10 +4,12 @@ using TMPro;
 public class ScoreManager : MonoBehaviour
 {
     // Classe statique pour gérer le score
-    public static int score = 0; // Le score initialisé à 0
+    public static int score = 0; // Le score est maintenant public
+    public static int highScore = 0; // Ajout du highscore
 
     // Référence au TextMeshPro pour afficher le score
-    [SerializeField] private TextMeshProUGUI textScore; // Référence à un TextMeshPro simple dans l'inspecteur
+    [SerializeField] private TextMeshProUGUI textScore; // Référence au TextMeshPro pour le score
+    [SerializeField] private TextMeshProUGUI textHighScore; // Référence au TextMeshPro pour le highscore
 
     // Méthode statique pour incrémenter le score
     public static void IncrementerScore(int points)
@@ -15,13 +17,51 @@ public class ScoreManager : MonoBehaviour
         score += points; // Incrémente le score de la valeur des points
     }
 
-    // Met à jour l'affichage du score
+    // Méthode pour réinitialiser le score (si nécessaire)
+    public static void ResetScore()
+    {
+        score = 0; // Réinitialise le score à 0
+    }
+
+    // Met à jour l'affichage du score et du highscore
     void Update()
     {
-        // Vérifie si le TextMeshPro est assigné et met à jour son texte
         if (textScore != null)
         {
-            textScore.text = "Score : " + score.ToString(); // Met à jour le texte pour afficher le score
+            textScore.text = score.ToString(); // Met à jour le texte pour afficher le score
+        }
+
+        // Mise à jour du highscore
+        if (textHighScore != null)
+        {
+            textHighScore.text = "Highscore : " + highScore.ToString(); // Met à jour le texte pour afficher le highscore
+        }
+    }
+
+    // Méthode pour vérifier et mettre à jour le highscore
+    public static void UpdateHighScore()
+    {
+        if (score > highScore)
+        {
+            highScore = score; // Met à jour le highscore
+        }
+    }
+
+    // Méthode pour afficher ou masquer l'affichage du score
+    public void SetScoreVisibility(bool visible)
+    {
+        if (textScore != null)
+        {
+            textScore.gameObject.SetActive(visible); // Active ou désactive l'objet contenant le score
+        }
+    }
+
+    // Méthode pour afficher ou masquer l'affichage du highscore
+    public void SetHighScoreVisibility(bool visible)
+    {
+        if (textHighScore != null)
+        {
+            textHighScore.gameObject.SetActive(visible); // Active ou désactive l'objet contenant le highscore
         }
     }
 }
